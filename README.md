@@ -6,6 +6,7 @@
 * * [Strategy](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/behavioral/strategy)
 * * [Chain of responsibility](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/chain)
 * * [Memento](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/memento)
+* * [Mediator](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/mediator)
 
 * [**Creational**](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational)
 * * [Builder](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational/builder)
