@@ -14,6 +14,7 @@
 * * [Factory](https://github.com/ZXZs/elixir-design-patterns/tree/master/creational/factory)
 * * [Prototype](https://github.com/ZXZs/elixir-design-patterns/tree/master/creational/prototype)
 * * [Singleton](https://github.com/ZXZs/elixir-design-patterns/tree/master/creational/singleton)
+* * [Factory method](https://github.com/ZXZs/elixir-design-patterns/tree/master/creational/factory_method)
 
 * [**Structural**](https://github.com/ZXZs/elixir-design-patterns/tree/master/structural)
 * * [Adapter](https://github.com/ZXZs/elixir-design-patterns/tree/master/structural/adapter)
