@@ -8,6 +8,7 @@
 * * [Memento](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/memento)
 * * [Mediator](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/mediator)
 * * [Template method](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/template_method)
+* * [State](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/state)
 
 * [**Creational**](https://github.com/ZXZs/elixir-design-patterns/tree/master/creational)
 * * [Builder](https://github.com/ZXZs/elixir-design-patterns/tree/master/creational/builder)
