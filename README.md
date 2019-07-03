@@ -7,13 +7,13 @@
 * * [Chain of responsibility](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/chain)
 * * [Memento](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/memento)
 * * [Mediator](https://github.com/ZXZs/elixir-design-patterns/tree/master/behavioral/mediator)
+* * [Template method](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational/template_method)
 
 * [**Creational**](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational)
 * * [Builder](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational/builder)
 * * [Factory](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational/factory)
 * * [Prototype](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational/prototype)
 * * [Singleton](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational/singleton)
-* * [Template method](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/creational/template_method)
 
 * [**Structural**](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/structural)
 * * [Adapter](https://github.com/ZXZs/design-patterns-in-elixir/tree/master/structural/adapter)
