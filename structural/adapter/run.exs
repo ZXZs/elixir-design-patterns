@@ -10,9 +10,10 @@ end
 
 defmodule Adapter do
 	@behaviour VectorGraphics
+	import RasterGraphics
 
-	defdelegate line,   to: RasterGraphics, as: :raster_line
-	defdelegate square, to: RasterGraphics, as: :raster_square
+	def line(),   do: raster_line()
+	def square(), do: raster_square()
 end
 
 defmodule App do
