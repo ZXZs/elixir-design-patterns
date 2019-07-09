@@ -1,58 +1,49 @@
 defmodule NormalCaseState do
-	defp loop() do 
-		receive do
-		{:use, text, pid} ->
-			send pid, (text |> String.capitalize)
-			loop()
-		end
-	end
-
-	def init() do
-		(Task.start_link fn -> loop() end) |> elem(1)
-	end
-end
-
-defmodule LowerCaseState do
-	defp loop() do 
-		receive do
-		{:use, text, pid} ->
-			send pid, (text |> String.downcase)
-			loop()
-		end
-	end
-
-	def init() do
-		(Task.start_link fn -> loop() end) |> elem(1)
-	end
+  def use(text) do
+    text |> String.capitalize
+  end
 end
 
 defmodule UpperCaseState do
-	defp loop() do receive do
-		{:use, text, pid} ->
-			send pid, (text |> String.upcase)
-			loop()
-		end
-	end
-
-	def init() do
-		(Task.start_link fn -> loop() end) |> elem(1)
-	end
+  def use(text) do
+    text |> String.upcase
+  end
 end
 
+defmodule LowerCaseState do
+  def use(text) do
+    text |> String.downcase
+  end
+end
+
+###############################################################################
+
 defmodule TextEditor do
-	defp loop(state \\ nil) do receive do
-		{:set, state} ->
-			loop(state)
+  use GenServer
 
-		{:use, text, pid} ->
-			send state, {:use, text, self()}
-			text = (receive do some -> some end)
-			send pid, text
-			loop(state)
-		end
-	end
+  def init(:ok) do
+    {:ok, nil}
+  end
 
-	def init() do
-		(Task.start_link fn -> loop() end) |> elem(1)
-	end
+  def handle_cast({:state, new_state}, _old_state) do
+    {:noreply, new_state}
+  end
+
+  def handle_call({:text, text}, _from, state) do
+    {:reply, state.use(text), state}
+  end
+
+  #############################################################################
+
+  def start_link do
+    GenServer.start_link(__MODULE__, :ok)
+  end
+
+  def set(server, state) do
+    GenServer.cast(server, {:state, state})
+  end
+
+  def edit(server, text) do
+    GenServer.call(server, {:text, text})
+  end
 end
