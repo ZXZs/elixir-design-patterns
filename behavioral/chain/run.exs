@@ -1,52 +1,84 @@
-defmodule ConsoleLogger do
-	defp loop(file \\ nil, email \\ nil) do
-		receive do
-			{:settings, file, email} ->
-				loop(file, email)
-
-			{:message, message} ->
-				IO.puts "Writing to console: #{message}"
-				loop(file, email)
-
-			{:warning, message} ->
-				IO.puts "Writing to console: #{message}"
-				send file, {:warning, message}
-				loop(file, email)
-
-			{:error, message}   ->
-				IO.puts "Writing to console: #{message}"
-				send email, {:error, message}
-				loop(file, email)
-		end
-	end
-
-	def init do
-		Task.start_link fn -> loop() end
-	end
-end
-
 defmodule FileLogger do
-	defp loop do
-		receive do
-			{:warning, message} ->
-				IO.puts "Writing to file: #{message}"
-		end
+	def init(:ok) do
+		{:ok, nil}
 	end
 
-	def init do
-		Task.start_link fn -> loop() end
+	def handle_cast({:wrn, msg}, nil) do
+		IO.puts "Logging to file: #{msg}"
+		{:noreply, nil}
+	end
+
+	###########################################################################
+
+	def start_link do
+		GenServer.start_link __MODULE__, :ok
+	end
+
+	def warn(pid, msg) do
+		GenServer.cast(pid, {:wrn, msg})
 	end
 end
 
 defmodule EmailLogger do
-	defp loop do
-		receive do
-			{:error, message} ->
-				IO.puts "Writing to email: #{message}"
-		end
+	def init(:ok) do
+		{:ok, nil}
 	end
 
-	def init do
-		Task.start_link fn -> loop() end
+	def handle_cast({:err, msg}, nil) do
+		IO.puts "Logging to email: #{msg}"
+		{:noreply, nil}
+	end
+
+	###########################################################################
+
+	def start_link do
+		GenServer.start_link __MODULE__, :ok
+	end
+
+	def error(pid, msg) do
+		GenServer.cast(pid, {:err, msg})
+	end
+end
+
+defmodule ConsoleLogger do
+	use GenServer
+
+	def init([file: file, email: email]) do
+		    {:ok, [file: file, email: email]}
+	end
+
+	def handle_cast({:log, msg}, settings) do
+		IO.puts "Logging to console: #{msg}"
+		{:noreply, settings}
+	end
+
+	def handle_cast({:wrn, msg}, settings) do
+		IO.puts "Logging to console: #{msg}"
+		settings[:file] |> FileLogger.warn(msg)
+		{:noreply, settings}
+	end
+
+	def handle_cast({:err, msg}, settings) do
+		IO.puts "Logging to console: #{msg}"
+		settings[:email] |> EmailLogger.error(msg)
+		{:noreply, settings}
+	end
+
+	###########################################################################
+
+	def start_link(file, email) do
+		GenServer.start_link __MODULE__, [file: file, email: email]
+	end
+
+	def log(pid, msg) do
+		GenServer.cast(pid, {:log, msg})
+	end
+
+	def warn(pid, msg) do
+		GenServer.cast(pid, {:wrn, msg})
+	end
+
+	def error(pid, msg) do
+		GenServer.cast(pid, {:err, msg})
 	end
 end
