@@ -1,40 +1,70 @@
 defmodule Save do
-	defstruct [:level, :ms]
+	use Agent
+
+	def init(level, ms) do
+		Agent.start_link (fn -> %{
+			level: level,
+			ms:    ms   ,
+		}
+		end)
+	end
+
+	def get(save) do
+		Agent.get(save, fn x -> x end)
+	end
 end
 
 defmodule Game do
-	defp loop(level \\ nil, ms \\ nil) do
-		receive do
-			{:set, level, ms} ->
-				loop(level, ms)
+	use Agent
 
-			{:load, save} ->
-				loop(save.level, save.ms)
-
-			{:save, caller} ->
-				send caller, % Save { level: level, ms: ms}
-				loop(level, ms)
-		end
+	def init(level \\ nil, ms \\ nil) do
+		Agent.start_link (fn -> %{
+			level: level,
+			ms:    ms   ,
+		} end)
 	end
 
-	def init do
-		Task.start_link fn -> loop() end
+	def set(game, level, ms) do
+		game |> Agent.update(fn x ->
+			x 
+			|> Map.put(:level, level)
+			|> Map.put(:ms   , ms   )
+		end)
+	end
+
+	def get(game) do
+		Agent.get(game, fn x -> x end)
+	end
+
+	def load(game, save) do
+		level = (save |> Save.get())[:level]
+		ms    = (save |> Save.get())[:ms   ]
+
+		game |> set(level, ms)
+	end
+
+	def save(game) do
+		level = get(game)[:level]
+		ms    = get(game)[:ms   ]
+	
+		{ :ok, save } = Save.init(level, ms); save
 	end
 end
 
-defmodule File_ do
-	defp loop(save \\ nil) do
-		receive do
-			{:get, caller} ->
-				send caller, save
-				loop(save)
+defmodule App.File do
+	use Agent
 
-			{:set, save} ->
-				loop(save)
-		end
+	def init(save \\ nil) do
+		Agent.start_link fn -> %{ save: save } end
 	end
 
-	def init do
-		Task.start_link fn -> loop() end
+	def get(file) do
+		file |> Agent.get(fn x -> x end)
+	end
+
+	def set(file, save) do
+		file  	|> Agent.update(fn x ->
+			x |> Map.put(:save, save)
+		end)
 	end
 end
