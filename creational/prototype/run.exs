@@ -1,28 +1,42 @@
 defmodule Copyable do
-  @callback copy(self :: Any) :: Any
-end
+  defmacro __using__(_opts) do
+    quote do
+      def copy(_pid) do
+        raise "#{__MODULE__}.copy is undefined"
+      end
 
-defmodule Human do
-  @behaviour Copyable
-
-  defstruct [:age, :name]
-
-  def copy(self), do: % Human { 
-    age: self.age, name: self.name 
-  }
-end
-
-defmodule App do
-  def main do
-    original = % Human {
-      age: 18,
-      name: "Vasya"
-    }
-
-    copy = original |> Human.copy
-
-    {original, copy}
+      defoverridable copy: 1
+    end
   end
 end
 
-App.main |> IO.inspect(width: 0)
+defmodule Human do
+  use Copyable
+
+  def init([name: name, age: age]) do
+    {:ok,  [name: name, age: age]}
+  end
+
+  def new(name, age) do
+    (GenServer.start_link __MODULE__, [name: name, age: age])
+    |> elem(1)
+  end
+
+  def handle_call(:get, _from, fields) do
+    {:reply, fields, fields}
+  end
+
+  def get(pid) do
+    GenServer.call(pid, :get)
+  end
+
+  def handle_call(:copy, _from, fields) do
+    name = fields[:name]
+    age  = fields[:age ]
+    {:reply, new(name, age), fields}
+  end
+
+  def copy(pid) do
+    GenServer.call(pid, :copy)
+  end
+end
