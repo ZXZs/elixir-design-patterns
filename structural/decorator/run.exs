@@ -1,33 +1,12 @@
-defmodule PrinterBehaviour do
-  @callback print(text :: String.t()) :: none()
-end
-
-defmodule Printer do
-  @behaviour PrinterBehaviour
-
-  defstruct [:text]
-
-  def print(self), do: IO.puts self.text
-end
-
-defmodule QuotesDecorator do
-  @behaviour PrinterBehaviour
-
-  defstruct [:printer]
-
-  def print(self), do: IO.puts ("\"" <> self.printer.text <> "\"")
-end
-
 defmodule App do
-  def main do
-    printer = % Printer { text: "Hello" }
-    decorated_printer = % QuotesDecorator { printer: printer }
+  def normal_text(text) do
+    text
+  end
 
-    printer |> Printer.print
-    decorated_printer |> QuotesDecorator.print
+  def text_with_quotes(text) do
+    "\"" <> normal_text(text) <> "\""
   end
 end
 
-App.main
-  # Hello
-  # "Hello"
+App.normal_text     ("HELLO WORLD!") |> IO.puts
+App.text_with_quotes("HELLO WORLD!") |> IO.puts
