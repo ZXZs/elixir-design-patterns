@@ -1,69 +1,81 @@
-defmodule Object do
-	def init(it) do
-		(Task.start_link fn -> it.loop() end) |> elem(1)
-	end
-end
+defmodule House do
+	defmacro __using__(_opts) do
+		quote do
+			def init(:ok) do
+				{:ok, true}
+			end
 
-defmodule App do
-	def fetch do
-		receive do some -> some end
-	end
-end
+			defoverridable init: 1
 
-################### ABSTRACT #############################
-
-defmodule Watch do
-	def show_time(it) do
-		send it, {:show, :time, self()}
-	end
-end
-
-defmodule WatchCreator do
-	def create(it) do
-		send it, {:create, self()}
-	end
-end
-
-####################### CONCRETE WATCH ###################
-
-defmodule DigitalWatch do
-	def loop do
-		receive do
-			{:show, :time, caller} -> 
-				send caller, "13:37"
-				loop()
+			def build do
+				GenServer.start_link __MODULE__, :ok
+			end
 		end
 	end
 end
 
-defmodule RomeWatch do
-	def loop do
-		receive do
-			{:show, :time, caller} -> 
-				send caller, "VII-XV"
-				loop()
+defmodule PanelHouse do
+	use House
+
+	def init(:ok) do
+		IO.puts "Panel house built"
+		super(:ok)
+	end
+end
+
+defmodule WoodHouse do
+	use House
+
+	def init(:ok) do
+		IO.puts "Wood house built"
+		super(:ok)
+	end
+end
+
+###############################################################################
+
+defmodule Developer do
+	defmacro __using__(_opts) do
+		quote do
+			def init(name) do
+				{:ok, name}
+			end
+
+			def new(name) do
+				GenServer.start_link __MODULE__, name
+			end
+
+			def create(pid) do
+				raise "#{__MODULE__}.create is undefined"
+			end
+
+			defoverridable create: 1
 		end
 	end
 end
 
-####################### CONCRETE CREATOR ###################
+defmodule PanelDeveloper do
+	use Developer
 
-defmodule DigitalWatchCreator do
-	def loop do
-		receive do
-			{:create, caller} ->
-				send caller, DigitalWatch |> Object.init()
-				loop()
-		end
+	def handle_call(:create, _from, name) do
+		{:ok, house} = PanelHouse.build()
+		{:reply, house, name}
+	end
+
+	def create(pid) do
+		GenServer.call(pid, :create)
 	end
 end
 
-defmodule RomeWatchCreator do
-	def loop do
-		receive do
-			{:create, caller} ->
-				send caller, RomeWatch |> Object.init()
-				loop()
-		end
+defmodule WoodDeveloper do
+	use Developer
+
+	def handle_call(:create, _from, name) do
+		{:ok, house} = WoodHouse.build()
+		{:reply, house, name}
+	end
+
+	def create(pid) do
+		GenServer.call(pid, :create)
 	end
 end
