@@ -1,0 +1,5 @@
+# Usage
+
+```
+$ elixir run.exs
+```
